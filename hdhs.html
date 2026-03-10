@@ -1,0 +1,296 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Permutation au Burkina Faso</title>
+    <style>
+        :root {
+            --rouge: #EF3340; --vert: #009739; --jaune: #FFCD00;
+            --noir: #1a1a1a; --gris-f: #f0f2f5;
+        }
+
+        body { font-family: 'Segoe UI', sans-serif; margin: 0; display: flex; min-height: 100vh; background: var(--gris-f); }
+
+        /* Menu Latéral */
+        nav { width: 300px; background: var(--noir); color: white; display: flex; flex-direction: column; box-shadow: 2px 0 10px rgba(0,0,0,0.5); }
+        .logo-box { padding: 30px 20px; text-align: center; border-bottom: 4px solid var(--rouge); background: #000; }
+        .logo-box h1 { font-size: 1.1rem; color: var(--jaune); margin: 0; text-transform: uppercase; letter-spacing: 1px; }
+
+        .menu-btn { padding: 18px 25px; cursor: pointer; border-bottom: 1px solid #333; transition: 0.3s; font-weight: 500; display: block; }
+        .menu-btn:hover { background: #333; color: var(--jaune); }
+        
+        /* Masquer les onglets protégés par défaut */
+        .protected { display: none !important; }
+        .submenu { display: none; background: #0a0a0a; border-left: 3px solid var(--rouge); }
+        .submenu div { padding: 12px 45px; cursor: pointer; border-bottom: 1px solid #222; font-size: 0.9rem; color: #bbb; }
+
+        /* Zone Principale */
+        main { flex-grow: 1; padding: 40px; display: flex; justify-content: center; align-items: flex-start; }
+        .card { background: white; width: 100%; max-width: 850px; padding: 35px; border-radius: 15px; box-shadow: 0 8px 30px rgba(0,0,0,0.1); display: none; }
+        .active { display: block !important; animation: fadeIn 0.3s ease; }
+
+        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+
+        h2 { color: var(--vert); border-left: 6px solid var(--rouge); padding-left: 15px; margin-top: 0; }
+        label { display: block; margin-top: 15px; font-weight: bold; font-size: 0.85rem; }
+        input, select, textarea { width: 100%; padding: 12px; margin-top: 6px; border: 1px solid #ddd; border-radius: 8px; box-sizing: border-box; font-size: 1rem; }
+
+        button { width: 100%; padding: 15px; margin-top: 20px; border: none; border-radius: 8px; font-weight: bold; cursor: pointer; transition: 0.3s; font-size: 1rem; }
+        .btn-v { background: var(--vert); color: white; }
+        .btn-n { background: var(--noir); color: white; }
+
+        /* Table Admin Linko */
+        table { width: 100%; border-collapse: collapse; margin-top: 20px; background: white; }
+        th, td { padding: 12px; border: 1px solid #eee; text-align: left; }
+        th { background: var(--noir); color: white; }
+        tr:hover { background: #f9f9f9; }
+        .wa-link { color: var(--vert); font-weight: bold; text-decoration: none; display: flex; align-items: center; }
+
+        .success-box { background: #e8f5e9; color: #2e7d32; padding: 25px; border-radius: 12px; border: 2px solid var(--vert); text-align: center; }
+        .linko-footer { margin-top: 40px; padding-top: 20px; border-top: 1px solid #eee; text-align: center; font-size: 0.85rem; color: #666; }
+
+        @media (max-width: 768px) { body { flex-direction: column; } nav { width: 100%; } main { padding: 20px; } }
+    </style>
+</head>
+<body>
+
+<nav>
+    <div class="logo-box"><h1>Permutation au Burkina Faso</h1></div>
+    <div class="menu-btn" id="btn-login" onclick="ouvrirOnglet('tab-auth')">Connexion / Inscription</div>
+    
+    <div class="protected-nav protected">
+        <div class="menu-btn" onclick="togglePermutations()">Permutations ▾</div>
+        <div id="sub-p" class="submenu">
+            <div onclick="ouvrirOnglet('tab-prop')">➜ Faire une proposition</div>
+            <div onclick="ouvrirOnglet('tab-rech')">➜ Chercher une permutation</div>
+        </div>
+        <div class="menu-btn" onclick="ouvrirOnglet('tab-param')">Mon Compte</div>
+        <div class="menu-btn" onclick="ouvrirOnglet('tab-admin')" style="color:var(--jaune);">🔑 Admin Linko</div>
+        <div class="menu-btn" onclick="ouvrirOnglet('tab-aide')">Aide & Support</div>
+        <div class="menu-btn" onclick="deconnexion()" style="color:var(--rouge);">Déconnexion</div>
+    </div>
+</nav>
+
+<main>
+    <section id="tab-auth" class="card active">
+        <h2 id="auth-title">Bienvenue</h2>
+        <p id="auth-desc">Veuillez vous connecter pour accéder aux services.</p>
+        <label>Email professionnel</label> <input type="email" id="auth-email" placeholder="email@exemple.bf">
+        <label>Mot de passe</label> <input type="password" id="auth-pass" placeholder="******">
+        <button class="btn-v" id="main-auth-btn" onclick="gererAuthentification()">Se connecter</button>
+        <button style="background:none; border:none; color:var(--vert); cursor:pointer; margin-top:10px; text-decoration:underline;" id="toggle-auth-btn" onclick="basculerModeAuth()">Pas de compte ? S'inscrire</button>
+    </section>
+
+    <section id="tab-prop" class="card">
+        <div id="prop-success-msg" style="display:none;" class="success-box">
+            <h3>✅ Enregistré avec succès !</h3>
+            <p>Bonne chance ! Pensez à chercher une permutation pour voir les offres déjà enregistrées.</p>
+            <button class="btn-n" onclick="ouvrirOnglet('tab-rech')">Voir les propositions</button>
+        </div>
+        <div id="prop-form-area">
+            <h2>Faire une proposition</h2>
+            <label>Nom & Prénom(s) *</label> <input type="text" id="p-nom">
+            <label>Matière *</label>
+            <select id="p-mat">
+                <option value="">-- Sélectionner --</option>
+                <option>Maths / PC</option><option>Maths</option><option>PC</option>
+                <option>Histoire Géographie</option><option>HG / Français</option>
+                <option>EPS</option><option>Anglais</option><option>Allemand</option>
+                <option>Maths / SVT</option><option>SVT</option><option>EC</option>
+            </select>
+            <label>Région actuelle *</label> <select id="p-reg" onchange="chargerProvinces(this, 'p-prov')"></select>
+            <label>Province actuelle *</label> <select id="p-prov"><option value="">Choisir la région</option></select>
+            <label>Numéro WhatsApp *</label> <input type="tel" id="p-wa" placeholder="Ex: 67448752">
+            <label>Commentaire</label> <textarea id="p-comm" rows="2"></textarea>
+            <button class="btn-v" onclick="publierOffre()">Publier mon annonce</button>
+        </div>
+    </section>
+
+    <section id="tab-rech" class="card">
+        <h2>Chercher un partenaire</h2>
+        <label>Région visée</label> <select id="s-reg" onchange="chargerProvinces(this, 's-prov')"></select>
+        <label>Province visée</label> <select id="s-prov"></select>
+        <button class="btn-n" onclick="lancerRecherche()">Rechercher</button>
+        <div id="results-area" style="margin-top:20px;"></div>
+    </section>
+
+    <section id="tab-admin" class="card">
+        <h2>Espace Administration (Linko)</h2>
+        <div id="admin-auth">
+            <label>Code PIN Secret</label> <input type="password" id="admin-pin">
+            <button class="btn-n" onclick="debloquerAdmin()">Voir les inscrits</button>
+        </div>
+        <div id="admin-view" style="display:none;">
+            <table>
+                <thead>
+                    <tr><th>Nom & Prénom</th><th>Matière</th><th>WhatsApp</th></tr>
+                </thead>
+                <tbody id="admin-table-body"></tbody>
+            </table>
+        </div>
+    </section>
+
+    <section id="tab-param" class="card">
+        <h2>Paramètres de sécurité</h2>
+        <label>Ancien mot de passe</label> <input type="password" id="old-p">
+        <label>Nouveau mot de passe</label> <input type="password" id="new-p">
+        <label>Confirmer nouveau mot de passe</label> <input type="password" id="conf-p">
+        <button class="btn-v" onclick="modifierPassword()">Changer mon mot de passe</button>
+    </section>
+
+    <section id="tab-aide" class="card">
+        <h2>Aide & Support</h2>
+        <button class="btn-v" style="background:#25D366" onclick="window.open('https://wa.me/22667448752')">Contact WhatsApp Linko</button>
+        <div class="linko-footer"><b>Ce projet est le fruit du Groupe Linko</b></div>
+    </section>
+</main>
+
+<script>
+    const geo = {"Boucle du Mouhoun":["Balé","Banwa","Kossi","Mouhoun","Nayala","Sourou"],"Cascades":["Comoé","Léraba"],"Centre":["Kadiogo"],"Centre-Est":["Boulgou","Koulpélogo","Kouritenga"],"Centre-Nord":["Bam","Namentenga","Sanmatenga"],"Centre-Ouest":["Boulkiemdé","Sanguié","Sissili","Ziro"],"Centre-Sud":["Bazèga","Nahouri","Zoundwéogo"],"Est":["Gnagna","Gourma","Komondjari","Kompienga","Tapoa"],"Hauts-Bassins":["Houet","Kénédougou","Tuy"],"Nord":["Loroum","Passoré","Yatenga","Zondoma"],"Plateau-Central":["Ganzourgou","Kourwéogo","Oubritenga"],"Sahel":["Oudalan","Séno","Soum","Yagha"],"Sud-Ouest":["Bougouriba","Ioba","Noumbiel","Poni"]};
+
+    let localDB = [];
+    let isConnected = false;
+    let isRegisterMode = false;
+    let userAccount = { email: "admin@linko.bf", pass: "123456" };
+
+    // --- SECURITÉ ET NAVIGATION ---
+    function ouvrirOnglet(id) {
+        if(!isConnected && id !== 'tab-auth') {
+            alert("Veuillez d'abord vous connecter.");
+            return;
+        }
+        document.querySelectorAll('.card').forEach(c => c.classList.remove('active'));
+        document.getElementById(id).classList.add('active');
+        if(id === 'tab-prop') {
+            document.getElementById('prop-success-msg').style.display = 'none';
+            document.getElementById('prop-form-area').style.display = 'block';
+        }
+    }
+
+    function basculerModeAuth() {
+        isRegisterMode = !isRegisterMode;
+        document.getElementById('auth-title').innerText = isRegisterMode ? "Inscription" : "Connexion";
+        document.getElementById('main-auth-btn').innerText = isRegisterMode ? "S'inscrire" : "Se connecter";
+        document.getElementById('toggle-auth-btn').innerText = isRegisterMode ? "Déjà un compte ? Connexion" : "Pas de compte ? S'inscrire";
+    }
+
+    function gererAuthentification() {
+        const e = document.getElementById('auth-email').value;
+        const p = document.getElementById('auth-pass').value;
+
+        if(isRegisterMode) {
+            if(!e || p.length < 6) return alert("Email valide et mot de passe de 6 caractères min.");
+            let code = prompt("Un code de confirmation a été envoyé à " + e + ". Entrez le code ici :");
+            if(code) {
+                userAccount = { email:e, pass:p };
+                validerConnexion();
+            }
+        } else {
+            if(e === userAccount.email && p === userAccount.pass) {
+                validerConnexion();
+            } else { alert("Email ou mot de passe incorrect."); }
+        }
+    }
+
+    function validerConnexion() {
+        isConnected = true;
+        document.querySelector('.protected-nav').classList.remove('protected');
+        document.getElementById('btn-login').style.display = 'none';
+        alert("Connexion réussie !");
+        ouvrirOnglet('tab-prop');
+    }
+
+    function deconnexion() {
+        isConnected = false;
+        document.querySelector('.protected-nav').classList.add('protected');
+        document.getElementById('btn-login').style.display = 'block';
+        ouvrirOnglet('tab-auth');
+    }
+
+    // --- FONCTIONS ---
+    function chargerProvinces(src, target) {
+        const sel = document.getElementById(target);
+        sel.innerHTML = '<option value="">-- Province --</option>';
+        if(src.value) geo[src.value].forEach(p => sel.innerHTML += `<option value="${p}">${p}</option>`);
+    }
+
+    function publierOffre() {
+        const nom = document.getElementById('p-nom').value;
+        const mat = document.getElementById('p-mat').value;
+        const wa = document.getElementById('p-wa').value;
+        const reg = document.getElementById('p-reg').value;
+        const prov = document.getElementById('p-prov').value;
+
+        if(!nom || !mat || !wa) return alert("Veuillez remplir les champs obligatoires.");
+
+        const data = { nom, mat, wa, reg, prov };
+        localDB.push(data);
+
+        // Envoi au serveur
+        fetch('save.php', { method: 'POST', headers: {'Content-Type': 'application/json'}, body: JSON.stringify(data) });
+
+        document.getElementById('prop-form-area').style.display = 'none';
+        document.getElementById('prop-success-msg').style.display = 'block';
+    }
+
+    function lancerRecherche() {
+        const r = document.getElementById('s-reg').value;
+        const area = document.getElementById('results-area');
+        const results = localDB.filter(x => x.reg === r);
+
+        if(results.length > 0) {
+            area.innerHTML = results.map(m => `
+                <div style="border:1px solid #ddd; padding:15px; margin-top:10px; border-radius:8px; border-left:5px solid var(--jaune);">
+                    <b>${m.nom}</b> (${m.mat})<br>Lieu: ${m.prov}<br>
+                    <button class="btn-v" style="font-size:0.8rem; margin-top:10px;" onclick="appelerPaiement()">Débloquer le numéro (500F)</button>
+                </div>
+            `).join('');
+        } else { area.innerHTML = "<p>Aucun résultat.</p>"; }
+    }
+
+    function appelerPaiement() {
+        alert("Lancement de l'interface de paiement (Orange Money / Moov)... \n[API Linko en attente]");
+        // Ici vous intégrerez votre API de paiement plus tard
+    }
+
+    function debloquerAdmin() {
+        if(document.getElementById('admin-pin').value === "1987") {
+            document.getElementById('admin-auth').style.display = 'none';
+            document.getElementById('admin-view').style.display = 'block';
+            const body = document.getElementById('admin-table-body');
+            body.innerHTML = localDB.map(m => `
+                <tr>
+                    <td>${m.nom}</td>
+                    <td>${m.mat}</td>
+                    <td><a href="https://wa.me/226${m.wa}" target="_blank" class="wa-link">📱 ${m.wa}</a></td>
+                </tr>
+            `).join('');
+        } else { alert("Code PIN incorrect."); }
+    }
+
+    function togglePermutations() {
+        const s = document.getElementById('sub-p');
+        s.style.display = (s.style.display === 'block') ? 'none' : 'block';
+    }
+
+    function modifierPassword() {
+        const op = document.getElementById('old-p').value;
+        const np = document.getElementById('new-p').value;
+        const cp = document.getElementById('conf-p').value;
+        if(op === userAccount.pass && np === cp && np.length >= 6) {
+            userAccount.pass = np;
+            alert("Mot de passe mis à jour !");
+        } else { alert("Erreur dans les mots de passe."); }
+    }
+
+    window.onload = function() {
+        const regs = Object.keys(geo);
+        document.querySelectorAll('#p-reg, #s-reg').forEach(s => {
+            s.innerHTML = '<option value="">-- Région --</option>';
+            regs.forEach(r => s.innerHTML += `<option value="${r}">${r}</option>`);
+        });
+    }
+</script>
+</body>
+</html>
